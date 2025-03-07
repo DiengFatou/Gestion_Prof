@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    image: gestion_professeurs  # Remplace par le nom de ton image Docker
+    container_name: professeurs
+    build:
+      context: .  # Répertoire où se trouve le Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"  # Rediriger le port 80 de l'application vers le port 8080 sur ta machine
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=gestion_professeurs
+      - DB_USERNAME=root
+      - DB_PASSWORD=a7832140
+    volumes:
+      - .:/var/www/html  # Lier le répertoire local avec celui du conteneur
+    networks:
+      - app-network
+
+#   db:
+#     image: mysql:8.0  # Utiliser l'image officielle de MySQL
+#     container_name: mysql_db
+#     environment:
+#       MYSQL_ROOT_PASSWORD: a7832140  # Définir le mot de passe root pour MySQL
+#       MYSQL_DATABASE: gestion_professeurs  # Créer la base de données Laravel
+#       MYSQL_USER: root  # Définir l'utilisateur MySQL
+#       MYSQL_PASSWORD: a7832140  # Définir le mot de passe de l'utilisateur
+#     volumes:
+#       - db_data:/var/lib/mysql  # Persister les données de la base de données
+#     networks:
+#       - app-network
+
+# networks:
+#   app-network:
+#     driver: bridge  
+
+# volumes:
+#   db_data:  
