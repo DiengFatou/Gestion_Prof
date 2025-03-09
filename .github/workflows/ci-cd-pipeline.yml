@@ -1,0 +1,50 @@
+name: CI/CD Pipeline for Laravel
+
+on:
+  push:
+    branches:
+      - main  # ou la branche de votre choix
+  pull_request:
+    branches:
+      - main  # ou la branche de votre choix
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # L'environnement où le pipeline s'exécutera
+
+    steps:
+      # Étape 1 : Vérifier le code (checkout)
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Étape 2 : Configurer PHP
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'  # ou la version PHP de votre choix
+
+      # Étape 3 : Installer les dépendances avec Composer
+      - name: Install dependencies
+        run: |
+          composer install --no-interaction --prefer-dist
+
+      # Étape 4 : Exécuter les tests unitaires
+      - name: Run tests
+        run: |
+          php artisan test
+
+  deploy:
+    needs: build  # Le déploiement s'exécute après la phase de build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Vérifier à nouveau le code pour la phase de déploiement
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Déployer l'application (exemple avec SSH)
+      - name: Deploy to Server
+        run: |
+          ssh user@your-server "cd /path/to/your/laravel/project && git pull origin main && composer install && php artisan migrate"
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # Votre clé privée SSH
